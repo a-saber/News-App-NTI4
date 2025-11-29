@@ -3,6 +3,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:nti4_news/core/widgets/custom_carousal_slider.dart';
 import 'package:nti4_news/features/home/cubit/home_cubit/home_cubit.dart';
 import 'package:nti4_news/features/home/cubit/home_cubit/home_state.dart';
 import 'package:nti4_news/features/home/views/widgets/most_popular_item.dart';
@@ -27,21 +28,14 @@ class HomeView extends StatelessWidget {
                 SizedBox(height: 24.h,),
                 Padding(
                   padding: REdgeInsets.symmetric(horizontal: 32),
-                  child: CarouselSlider(
-                    options: CarouselOptions(
-                      enlargeCenterPage: true,
-                      viewportFraction: 1,
-                      height: 274.0.h,
-                      autoPlay: true,
-                      onPageChanged: (index, reason) {
-                        HomeCubit.get(context).onIndexChanged(index);
-                      },
-                    ),
-                    items: [1,2,3,4,5].map((i) {
-                      return SliderItemBuilder(
-                        title: 'title $i', author: 'author $i', imageUrl: 'https://picsum.photos/800/400?image=${i + 10}');})
-                        .toList(),
-                  ),
+                  child: CustomCarousalSlider(
+                    items: List.generate(5, (index) => SliderItemBuilder(
+                      title: 'Title $index', author: 'Description $index', 
+                      imageUrl: 'https://picsum.photos/200/200?image=${index + 20}')
+                      ),
+                      onPageChanged: HomeCubit.get(context).onIndexChanged,
+
+                  )
                 ),
                 DotsIndicator(
                   dotsCount: 5,
