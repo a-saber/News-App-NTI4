@@ -15,30 +15,43 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HomeCubit(),
+      create: (context) => HomeCubit()..fetchTopHeadlines(),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Home View'),
         ),
         body: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
-            return Column(
+            if(state is HomeTopHeadlinesLoadingState){
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            else if(state is HomeTopHeadlinesErrorState){
+              return const Center(
+                child: Text('Error occurred while fetching data'),
+              );
+            }
+            else if(HomeCubit.get(context).newsResponse != null ){
+              return Column(
               children: 
               [
                 SizedBox(height: 24.h,),
                 Padding(
                   padding: REdgeInsets.symmetric(horizontal: 32),
                   child: CustomCarousalSlider(
-                    items: List.generate(5, (index) => SliderItemBuilder(
-                      title: 'Title $index', author: 'Description $index', 
-                      imageUrl: 'https://picsum.photos/200/200?image=${index + 20}')
+                    items: List.generate(HomeCubit.get(context).newsResponse!.articles!.length, (index) => SliderItemBuilder(
+                      title: HomeCubit.get(context).newsResponse!.articles![index].title ?? 'No Title', 
+                      author: HomeCubit.get(context).newsResponse!.articles![index].author ?? 'Unknown Author', 
+                      imageUrl: HomeCubit.get(context).newsResponse!.articles![index].urlToImage ?? ''
+                      )
                       ),
                       onPageChanged: HomeCubit.get(context).onIndexChanged,
 
                   )
                 ),
                 DotsIndicator(
-                  dotsCount: 5,
+                  dotsCount: HomeCubit.get(context).newsResponse!.articles!.length,
                   position: HomeCubit.get(context).currentIndex.toDouble(),
                   decorator: DotsDecorator(
                     color: Colors.black87, // Inactive color
@@ -79,7 +92,11 @@ class HomeView extends StatelessWidget {
                   
               ],
             );
-          }
+            }
+            else{
+              return const SizedBox();
+            }
+            }
         ),
       ),
     );

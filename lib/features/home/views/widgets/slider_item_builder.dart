@@ -31,10 +31,12 @@ final String imageUrl;
                           Expanded(
                             child: Text(
                               title,
+                              maxLines: 2,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20.sp,
                                 fontWeight: FontWeight.bold,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ),
